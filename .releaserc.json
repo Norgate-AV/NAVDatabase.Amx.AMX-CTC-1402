@@ -53,7 +53,7 @@
             {
                 "assets": [
                     {
-                        "path": "./src/**/*.{tko|TKO}"
+                        "path": "./src/*.{tko|TKO}"
                     }
                 ]
             }
