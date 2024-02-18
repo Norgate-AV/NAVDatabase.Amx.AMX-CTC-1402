@@ -26,6 +26,16 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 8
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: pnpm
+
       - name: Show Environment
         run: |
           $PSVersionTable
@@ -78,6 +88,9 @@ jobs:
           Write-Host "RUNNER_OS: $env:RUNNER_OS"
           Write-Host "RUNNER_TEMP: $env:RUNNER_TEMP"
           Write-Host "RUNNER_TOOL_CACHE: $env:RUNNER_TOOL_CACHE"
+
+      - name: Install Dependencies
+        run: pnpm install
 
       - name: Build
         run: ./build.ps1
