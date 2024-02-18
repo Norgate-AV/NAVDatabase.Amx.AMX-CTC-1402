@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.4](https://github.com/Norgate-AV/NAVDatabase.Amx.AMX-CTC-1402/compare/v1.0.3...v1.0.4) (2024-02-18)
+
+### 🐛 Bug Fixes
+
+-   update github asset path ([3cbc7bb](https://github.com/Norgate-AV/NAVDatabase.Amx.AMX-CTC-1402/commit/3cbc7bb04c81d72127d995a9828df62b04168abe))
+
+### ✨ Refactor
+
+-   update asset path ([6b9ce2c](https://github.com/Norgate-AV/NAVDatabase.Amx.AMX-CTC-1402/commit/6b9ce2cf522a7964eb0c8febe8cd84912a28a5c1))
+
 ## [1.0.3](https://github.com/Norgate-AV/NAVDatabase.Amx.AMX-CTC-1402/compare/v1.0.2...v1.0.3) (2024-02-18)
 
 ### ✨ Refactor
