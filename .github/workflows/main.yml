@@ -83,18 +83,18 @@ jobs:
         run: ./build.ps1
 
       - name: Upload build log only if failure
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: build-log
           path: ./*.build.log
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
           path: |
-            ./Source/*.tko
+            ./src/*.tko
             ./*.build.log
 
   release:
@@ -181,3 +181,5 @@ jobs:
 
       - name: Release
         run: pnpm semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
