@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.3](https://github.com/Norgate-AV/NAVDatabase.Amx.AMX-CTC-1402/compare/v1.0.2...v1.0.3) (2024-02-18)
+
+### ✨ Refactor
+
+-   update asset path ([bddf12f](https://github.com/Norgate-AV/NAVDatabase.Amx.AMX-CTC-1402/commit/bddf12f45d945da314254162dc6899a5cfd61e99))
+
 ## [1.0.2](https://github.com/Norgate-AV/NAVDatabase.Amx.AMX-CTC-1402/compare/v1.0.1...v1.0.2) (2024-02-18)
 
 ### ✨ Refactor
