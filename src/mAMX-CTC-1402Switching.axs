@@ -59,12 +59,12 @@ DEFINE_TYPE
 (***********************************************************)
 DEFINE_VARIABLE
 
-volatile long ltDrive[] = { 200 }
+volatile long driveTick[] = { 200 }
 
-volatile integer iCommandBusy
+volatile integer commandBusy
 
-volatile integer iOutput
-volatile integer iPending
+volatile integer output
+volatile integer pending
 
 (***********************************************************)
 (*               LATCHING DEFINITIONS GO BELOW             *)
@@ -81,25 +81,29 @@ DEFINE_MUTUALLY_EXCLUSIVE
 (***********************************************************)
 (* EXAMPLE: DEFINE_FUNCTION <RETURN_TYPE> <NAME> (<PARAMETERS>) *)
 (* EXAMPLE: DEFINE_CALL '<NAME>' (<PARAMETERS>) *)
-define_function Send(char cPayload[]) {
-    NAVLog(NAVFormatStandardLogMessage(NAV_STANDARD_LOG_MESSAGE_TYPE_COMMAND_TO, dvPort, cPayload))
-    send_command dvPort, "cPayload"
-    wait 1 iCommandBusy = false
+
+define_function Send(char payload[]) {
+    NAVErrorLog(NAV_LOG_LEVEL_DEBUG, NAVFormatStandardLogMessage(NAV_STANDARD_LOG_MESSAGE_TYPE_COMMAND_TO, dvPort, payload))
+    send_command dvPort, "payload"
+    wait 1 commandBusy = false
 }
 
-define_function char[NAV_MAX_CHARS] Build(integer iInput) {
-    return "'CI', itoa(iInput), 'OALL'"
+
+define_function char[NAV_MAX_CHARS] Build(integer input) {
+    return "'CI', itoa(input), 'OALL'"
 }
+
 
 define_function Drive() {
     stack_var integer x
     stack_var integer i
-    if (!iCommandBusy) {
-	if (iPending && !iCommandBusy) {
-	    iPending = false
-	    iCommandBusy = true
-	    Send(Build(iOutput))
-	}
+
+    if (!commandBusy) {
+        if (pending && !commandBusy) {
+            pending = false
+            commandBusy = true
+            Send(Build(output))
+        }
     }
 }
 
@@ -115,49 +119,49 @@ DEFINE_START {
 (*                THE EVENTS GO BELOW                      *)
 (***********************************************************)
 DEFINE_EVENT
+
 data_event[dvPort] {
     online: {
-	NAVCommand(data.device, "'VIDIN_AUTO_SELECT-DISABLE'")
-	NAVTimelineStart(TL_DRIVE, ltDrive, TIMELINE_ABSOLUTE, TIMELINE_REPEAT)
+        NAVCommand(data.device, "'VIDIN_AUTO_SELECT-DISABLE'")
+        NAVTimelineStart(TL_DRIVE, driveTick, TIMELINE_ABSOLUTE, TIMELINE_REPEAT)
     }
     string: {
-	[vdvObject, DEVICE_COMMUNICATING] = true
-	[vdvObject, DATA_INITIALIZED] = true
-	NAVLog(NAVFormatStandardLogMessage(NAV_STANDARD_LOG_MESSAGE_TYPE_STRING_FROM, dvPort, data.text))
+        [vdvObject, DEVICE_COMMUNICATING] = true
+        [vdvObject, DATA_INITIALIZED] = true
+        NAVErrorLog(NAV_LOG_LEVEL_DEBUG, NAVFormatStandardLogMessage(NAV_STANDARD_LOG_MESSAGE_TYPE_STRING_FROM, dvPort, data.text))
     }
 }
+
 
 data_event[vdvObject] {
     online: {
-	NAVCommand(data.device, "'PROPERTY-RMS_MONITOR_ASSET_PROPERTY,MONITOR_ASSET_DESCRIPTION,Switcher'")
-	NAVCommand(data.device, "'PROPERTY-RMS_MONITOR_ASSET_PROPERTY,MONITOR_ASSET_MANUFACTURER_URL,www.amx.com'")
-	NAVCommand(data.device, "'PROPERTY-RMS_MONITOR_ASSET_PROPERTY,MONITOR_ASSET_MANUFACTURER_NAME,AMX'")
+        NAVCommand(data.device, "'PROPERTY-RMS_MONITOR_ASSET_PROPERTY,MONITOR_ASSET_DESCRIPTION,Switcher'")
+        NAVCommand(data.device, "'PROPERTY-RMS_MONITOR_ASSET_PROPERTY,MONITOR_ASSET_MANUFACTURER_URL,www.amx.com'")
+        NAVCommand(data.device, "'PROPERTY-RMS_MONITOR_ASSET_PROPERTY,MONITOR_ASSET_MANUFACTURER_NAME,AMX'")
     }
     command: {
-	stack_var char cCmdHeader[NAV_MAX_CHARS]
-	stack_var char cCmdParam[3][NAV_MAX_CHARS]
-	NAVLog(NAVFormatStandardLogMessage(NAV_STANDARD_LOG_MESSAGE_TYPE_COMMAND_FROM, data.device, data.text))
-	cCmdHeader = DuetParseCmdHeader(data.text)
-	cCmdParam[1] = DuetParseCmdParam(data.text)
-	cCmdParam[2] = DuetParseCmdParam(data.text)
-	cCmdParam[3] = DuetParseCmdParam(data.text)
-	switch (cCmdHeader) {
-	    case 'PASSTHRU': { Send(cCmdParam[1]) }
-	    case 'SWITCH': {
-		iOutput = atoi(cCmdParam[1])
-		iPending = true
-	    }
-	}
+        stack_var char cmdHeader[NAV_MAX_CHARS]
+        stack_var char cmdParam[3][NAV_MAX_CHARS]
+
+        NAVErrorLog(NAV_LOG_LEVEL_DEBUG, NAVFormatStandardLogMessage(NAV_STANDARD_LOG_MESSAGE_TYPE_COMMAND_FROM, data.device, data.text))
+
+        cmdHeader = DuetParseCmdHeader(data.text)
+        cmdParam[1] = DuetParseCmdParam(data.text)
+        cmdParam[2] = DuetParseCmdParam(data.text)
+        cmdParam[3] = DuetParseCmdParam(data.text)
+
+        switch (cmdHeader) {
+            case 'PASSTHRU': { Send(cmdParam[1]) }
+            case 'SWITCH': {
+                output = atoi(cmdParam[1])
+                pending = true
+            }
+        }
     }
 }
+
 
 timeline_event[TL_DRIVE] { Drive() }
-
-channel_event[vdvObject,0] {
-    on: {
-	//Place holder so get_last works...
-    }
-}
 
 
 (***********************************************************)
