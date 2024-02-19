@@ -4,6 +4,8 @@ MODULE_NAME='mAMX-CTC-1402Volume' 	(
                                     )
 
 (***********************************************************)
+#DEFINE USING_NAV_MODULE_BASE_CALLBACKS
+#DEFINE USING_NAV_MODULE_BASE_PASSTHRU_EVENT_CALLBACK
 #include 'NAVFoundation.ModuleBase.axi'
 
 /*
@@ -74,9 +76,14 @@ DEFINE_MUTUALLY_EXCLUSIVE
 (***********************************************************)
 (* EXAMPLE: DEFINE_FUNCTION <RETURN_TYPE> <NAME> (<PARAMETERS>) *)
 (* EXAMPLE: DEFINE_CALL '<NAME>' (<PARAMETERS>) *)
+
 define_function Send(char payload[]) {
-    NAVErrorLog(NAV_LOG_LEVEL_DEBUG, NAVFormatStandardLogMessage(NAV_STANDARD_LOG_MESSAGE_TYPE_COMMAND_TO, dvPort, payload))
-    NAVCommand(dvPort, "payload")
+    NAVErrorLog(NAV_LOG_LEVEL_DEBUG,
+                NAVFormatStandardLogMessage(NAV_STANDARD_LOG_MESSAGE_TYPE_COMMAND_TO,
+                                            dvPort,
+                                            payload))
+
+    NAVCommand(dvPort, payload)
 }
 
 
@@ -91,27 +98,23 @@ define_function char[NAV_MAX_CHARS] Build(char attribute[], char value[]) {
 
 define_function SetVolume(integer value) {
     stack_var integer volume
+
     volume = value * 100 / 255
+
     Send(Build('AUDOUT_VOLUME', itoa(volume)))
 }
 
 
-define_function Process(char param[]) {
-    stack_var char cmdHeader[NAV_MAX_CHARS]
-    stack_var char cmdParam[3][NAV_MAX_CHARS]
-
-    cmdHeader = DuetParseCmdHeader(param)
-    cmdParam[1] = DuetParseCmdParam(param)
-    cmdParam[2] = DuetParseCmdParam(param)
-    cmdParam[3] = DuetParseCmdParam(param)
-
-    switch (cmdHeader) {
-        case 'AUDOUT_VOLUME': {
-            currentVolume = atoi(cmdParam[1])
-            send_level vdvObject, VOL_LVL, currentVolume * 255 / 100
-        }
+#IF_DEFINED USING_NAV_MODULE_BASE_PASSTHRU_EVENT_CALLBACK
+define_function NAVModulePassthruEventCallback(_NAVModulePassthruEvent event) {
+    if (event.Device != vdvObject) {
+        return
     }
+
+    Send(event.Payload)
 }
+#END_IF
+
 
 (***********************************************************)
 (*                STARTUP CODE GOES BELOW                  *)
@@ -133,14 +136,31 @@ data_event[dvPort] {
     string: {
         [vdvObject, DEVICE_COMMUNICATING] = true
         [vdvObject, DATA_INITIALIZED] = true
-        NAVErrorLog(NAV_LOG_LEVEL_DEBUG, NAVFormatStandardLogMessage(NAV_STANDARD_LOG_MESSAGE_TYPE_STRING_FROM, data.device, data.text))
-        Process(data.text)
+
+        NAVErrorLog(NAV_LOG_LEVEL_DEBUG,
+                    NAVFormatStandardLogMessage(NAV_STANDARD_LOG_MESSAGE_TYPE_STRING_FROM,
+                                                data.device,
+                                                data.text))
     }
     command: {
+        stack_var _NAVSnapiMessage message
+
+        NAVParseSnapiMessage(data.text, message)
+
         [vdvObject, DEVICE_COMMUNICATING] = true
         [vdvObject, DATA_INITIALIZED] = true
-        NAVErrorLog(NAV_LOG_LEVEL_DEBUG, NAVFormatStandardLogMessage(NAV_STANDARD_LOG_MESSAGE_TYPE_COMMAND_FROM, data.device, data.text))
-        Process(data.text)
+
+        NAVErrorLog(NAV_LOG_LEVEL_DEBUG,
+                    NAVFormatStandardLogMessage(NAV_STANDARD_LOG_MESSAGE_TYPE_COMMAND_FROM,
+                        data.device,
+                        data.text))
+
+        switch (message.Header) {
+            case 'AUDOUT_VOLUME': {
+                currentVolume = atoi(message.Parameter[1])
+                send_level vdvObject, VOL_LVL, currentVolume * 255 / 100
+            }
+        }
     }
 }
 
@@ -152,20 +172,18 @@ data_event[vdvObject] {
         NAVCommand(data.device, "'PROPERTY-RMS_MONITOR_ASSET_PROPERTY,MONITOR_ASSET_MANUFACTURER_NAME,AMX'")
     }
     command: {
-        stack_var char cmdHeader[NAV_MAX_CHARS]
-        stack_var char cmdParam[3][NAV_MAX_CHARS]
+        stack_var _NAVSnapiMessage message
 
-        NAVErrorLog(NAV_LOG_LEVEL_DEBUG, NAVFormatStandardLogMessage(NAV_STANDARD_LOG_MESSAGE_TYPE_COMMAND_FROM, data.device, data.text))
+        NAVErrorLog(NAV_LOG_LEVEL_DEBUG,
+                    NAVFormatStandardLogMessage(NAV_STANDARD_LOG_MESSAGE_TYPE_COMMAND_FROM,
+                                                data.device,
+                                                data.text))
 
-        cmdHeader = DuetParseCmdHeader(data.text)
-        cmdParam[1] = DuetParseCmdParam(data.text)
-        cmdParam[2] = DuetParseCmdParam(data.text)
-        cmdParam[3] = DuetParseCmdParam(data.text)
+        NAVParseSnapiMessage(data.text, message)
 
-        switch (cmdHeader) {
-            case 'PASSTHRU': { Send(cmdParam[1]) }
+        switch (message.Header) {
             case 'VOLUME': {
-                SetVolume(atoi(cmdParam[1]))
+                SetVolume(atoi(message.Parameter[1]))
             }
         }
     }
