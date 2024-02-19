@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.0.5](https://github.com/Norgate-AV/NAVDatabase.Amx.AMX-CTC-1402/compare/v1.0.4...v1.0.5) (2024-02-19)
+
+### 🧰 Chores
+
+-   **vscode:** update extension list ([0bb360e](https://github.com/Norgate-AV/NAVDatabase.Amx.AMX-CTC-1402/commit/0bb360eb39ffcfc72bcec973d86c180c98d0b5c2))
+-   **vscode:** update workspace settings ([fbd80ad](https://github.com/Norgate-AV/NAVDatabase.Amx.AMX-CTC-1402/commit/fbd80ad90e6260a6a9d55afdcb145e9d642648ca))
+
+### ✨ Refactor
+
+-   make use of foundation library ([e4bdaff](https://github.com/Norgate-AV/NAVDatabase.Amx.AMX-CTC-1402/commit/e4bdaff97534ee79d6596654d58e609075fe287e))
+
+### 🛠️ Build
+
+-   add vscode build task ([b29a08f](https://github.com/Norgate-AV/NAVDatabase.Amx.AMX-CTC-1402/commit/b29a08fcb70e12b344af65df0552f841c3152021))
+
+### 🤖 CI
+
+-   simlpify workflow to a single job ([b1f64d9](https://github.com/Norgate-AV/NAVDatabase.Amx.AMX-CTC-1402/commit/b1f64d9863a26d3524ac20c216bd2ceebdd3ff60))
+-   **semantic-release:** update semantic-release config ([a9887c0](https://github.com/Norgate-AV/NAVDatabase.Amx.AMX-CTC-1402/commit/a9887c0aec9db04123f5b0213a907740d89c28ea))
+
 ## [1.0.4](https://github.com/Norgate-AV/NAVDatabase.Amx.AMX-CTC-1402/compare/v1.0.3...v1.0.4) (2024-02-18)
 
 ### 🐛 Bug Fixes
