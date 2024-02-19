@@ -1,5 +1,6 @@
 {
-    "name": "NAVDatabase.Amx.AMX-CTC-1402",
+    "name": "amx-ctc-1402",
+    "displayName": "NAVDatabase.Amx.AMX-CTC-1402",
     "version": "1.0.0",
     "private": true,
     "keywords": [
@@ -17,7 +18,7 @@
         "url": "https://github.com/Norgate-AV/NAVDatabase.Amx.AMX-CTC-1402/issues"
     },
     "engines": {
-        "node": ">=14"
+        "node": ">=18"
     },
     "scripts": {
         "build": "pwsh ./build.ps1",
