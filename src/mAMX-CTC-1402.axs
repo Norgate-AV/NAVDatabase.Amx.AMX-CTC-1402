@@ -1,12 +1,15 @@
-MODULE_NAME='mAMX-CTC-1402Volume' 	(
-                                        dev vdvObject,
-                                        dev dvPort
-                                    )
+MODULE_NAME='mAMX-CTC-1402' 	(
+                                    dev vdvObject,
+                                    dev dvPort
+                                )
 
 (***********************************************************)
 #DEFINE USING_NAV_MODULE_BASE_CALLBACKS
 #DEFINE USING_NAV_MODULE_BASE_PASSTHRU_EVENT_CALLBACK
 #include 'NAVFoundation.ModuleBase.axi'
+
+#DEFINE USING_NAV_LOGIC_ENGINE_EVENT_CALLBACK
+#include 'NAVFoundation.LogicEngine.axi'
 
 /*
  _   _                       _          ___     __
@@ -59,6 +62,11 @@ DEFINE_TYPE
 (***********************************************************)
 DEFINE_VARIABLE
 
+volatile integer busy = false
+
+volatile integer output
+volatile integer pending
+
 volatile integer currentVolume
 
 (***********************************************************)
@@ -84,10 +92,16 @@ define_function Send(char payload[]) {
                                             payload))
 
     NAVCommand(dvPort, payload)
+    wait 1 busy = false
 }
 
 
-define_function char[NAV_MAX_CHARS] Build(char attribute[], char value[]) {
+define_function char[NAV_MAX_CHARS] BuildSwitch(integer input) {
+    return "'CI', itoa(input), 'OALL'"
+}
+
+
+define_function char[NAV_MAX_CHARS] BuildVolume(char attribute[], char value[]) {
     if (!length_array(value)) {
         return "attribute"
     }
@@ -101,8 +115,30 @@ define_function SetVolume(integer value) {
 
     volume = value * 100 / 255
 
-    Send(Build('AUDOUT_VOLUME', itoa(volume)))
+    Send(BuildVolume('AUDOUT_VOLUME', itoa(volume)))
 }
+
+
+define_function Drive() {
+    if (busy || !pending) {
+        return
+    }
+
+    pending = false
+    busy = true
+    Send(BuildSwitch(output))
+}
+
+
+#IF_DEFINED USING_NAV_LOGIC_ENGINE_EVENT_CALLBACK
+define_function NAVLogicEngineEventCallback(_NAVLogicEngineEvent args) {
+    switch (args.Id) {
+        case NAV_LOGIC_ENGINE_EVENT_ID_ACTION: {
+            Drive()
+        }
+    }
+}
+#END_IF
 
 
 #IF_DEFINED USING_NAV_MODULE_BASE_PASSTHRU_EVENT_CALLBACK
@@ -130,8 +166,10 @@ DEFINE_EVENT
 
 data_event[dvPort] {
     online: {
-        Send(Build('?AUDOUT_VOLUME', ''))
-        Send(Build('?AUDOUT_MUTE', ''))
+        NAVCommand(data.device, "'VIDIN_AUTO_SELECT-DISABLE'")
+
+        Send(BuildVolume('?AUDOUT_VOLUME', ''))
+        Send(BuildVolume('?AUDOUT_MUTE', ''))
     }
     string: {
         [vdvObject, DEVICE_COMMUNICATING] = true
@@ -182,6 +220,10 @@ data_event[vdvObject] {
         NAVParseSnapiMessage(data.text, message)
 
         switch (message.Header) {
+            case 'SWITCH': {
+                output = atoi(message.Parameter[1])
+                pending = true
+            }
             case 'VOLUME': {
                 SetVolume(atoi(message.Parameter[1]))
             }
