@@ -1,5 +1,28 @@
 # Changelog
 
+## [2.0.0](https://github.com/Norgate-AV/NAVDatabase.Amx.AMX-CTC-1402/compare/v1.0.5...v2.0.0) (2024-02-19)
+
+### ⚠ BREAKING CHANGES
+
+-   combine into a single module
+
+### 🌟 Features
+
+-   combine into a single module ([d273efe](https://github.com/Norgate-AV/NAVDatabase.Amx.AMX-CTC-1402/commit/d273efec67cbfaf6f2d0d3bc56bc3e2e11662783))
+
+### 🧰 Chores
+
+-   add npmrc file to enable pre/post scripts ([5825e95](https://github.com/Norgate-AV/NAVDatabase.Amx.AMX-CTC-1402/commit/5825e95e551c3ebec3f60a2f8ae26575b8723f97))
+-   update package name ([a6b6537](https://github.com/Norgate-AV/NAVDatabase.Amx.AMX-CTC-1402/commit/a6b65372d8759a0757f5c31c5c8378f9bbbb417b))
+
+### 📖 Documentation
+
+-   **readme:** update docs with usage and api ([858cd4b](https://github.com/Norgate-AV/NAVDatabase.Amx.AMX-CTC-1402/commit/858cd4bbaf4b7062e26ec8e030a339dbb9411360))
+
+### 🤖 CI
+
+-   **semantic-release:** add npm plugin to update version in package.json ([78dbd7f](https://github.com/Norgate-AV/NAVDatabase.Amx.AMX-CTC-1402/commit/78dbd7ff1de109595d6b46e643be483eb6e3bf6c))
+
 ## [1.0.5](https://github.com/Norgate-AV/NAVDatabase.Amx.AMX-CTC-1402/compare/v1.0.4...v1.0.5) (2024-02-19)
 
 ### 🧰 Chores
