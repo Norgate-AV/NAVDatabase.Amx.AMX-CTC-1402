@@ -13,18 +13,50 @@
 
 ---
 
-Description
+A NetLinx module for interfacing with the AMX CTC-1402 switcher.
 
 ## Contents 📖
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+-   [Usage :zap:](#usage-zap)
+-   [API :technologist:](#api-technologist)
 -   [Team :soccer:](#team-soccer)
 -   [Contributors :sparkles:](#contributors-sparkles)
 -   [LICENSE :balance_scale:](#license-balance_scale)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## Usage :zap:
+
+```c
+DEFINE_DEVICE
+
+dvSwitcher      =       6001:1:0
+vdvSwitcher     =       33201:1:0
+
+
+define_module 'mAMX-CTC-1402' SwitcherComm(vdvSwitcher, dvSwitcher)
+
+DEFINE_EVENT
+
+data_event[vdvSwitcher] {
+    online: {
+        // Switch to Input 1
+        send_command data.device, "'SWITCH-1'"
+
+        // Set Volume to 50% (0-255)
+        send_command data.device, "'VOLUME-128'"
+    }
+}
+```
+
+## API :technologist:
+
+`SWITCH` - Switch to the specified input. The input number is specified as a string. For example, to switch to input 1, send the command `'SWITCH-1'`
+
+`VOLUME` - Set the volume to the specified level. The volume level is specified as a string. For example, to set the volume to 50%, send the command `'VOLUME-128'`
 
 ## Team :soccer:
 
