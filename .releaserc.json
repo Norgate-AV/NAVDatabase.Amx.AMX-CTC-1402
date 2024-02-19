@@ -26,12 +26,14 @@
                     "types": [
                         { "type": "feat", "section": "🌟 Features" },
                         { "type": "fix", "section": "🐛 Bug Fixes" },
-                        { "type": "chore", "hidden": true },
+                        { "type": "chore", "section": "🧰 Chores" },
                         { "type": "docs", "section": "📖 Documentation" },
-                        { "type": "style", "hidden": true },
+                        { "type": "style", "section": "💅 Style" },
                         { "type": "refactor", "section": "✨ Refactor" },
                         { "type": "perf", "section": "🚀 Performance" },
-                        { "type": "test", "hidden": true }
+                        { "type": "test", "section": "🧪 Tests" },
+                        { "type": "build", "section": "🛠️ Build" },
+                        { "type": "ci", "section": "🤖 CI" }
                     ]
                 }
             }

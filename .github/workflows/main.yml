@@ -14,8 +14,8 @@ defaults:
     shell: pwsh
 
 jobs:
-  release:
-    name: Create Release
+  build-and-release:
+    name: Build & Release
 
     runs-on: [self-hosted, windows, server]
 
@@ -89,7 +89,7 @@ jobs:
           node-version-file: ".nvmrc"
           cache: pnpm
 
-      - name: Install Dependencies
+      - name: Install
         run: pnpm install
 
       - name: Build
