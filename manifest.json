@@ -1,0 +1,20 @@
+{
+    "name": "NAVDatabase.Amx.AMX-CTC-1402",
+    "description": "NetLinx module for AMX CTC-1402 switcher",
+    "version": "2.0.0",
+    "license": "MIT",
+    "files": ["src/*.axs", "src/*.tko", "lib/*.axi", "SymLink.ps1", "LICENSE", "README.md"],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Norgate-AV/NAVDatabase.Amx.AMX-CTC-1402.git"
+    },
+    "bugs": {
+        "url": "https://github.com/Norgate-AV/NAVDatabase.Amx.AMX-CTC-1402/issues"
+    },
+    "dependencies": [
+        {
+            "version": "^1.25.0",
+            "url": "github.com/Norgate-AV/NAVFoundation.Amx"
+        }
+    ]
+}
